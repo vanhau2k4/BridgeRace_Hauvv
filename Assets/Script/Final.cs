@@ -27,19 +27,20 @@ public class Final : MonoBehaviour
             gameObject.SetActive(false);
             player.Final();
 
-            foreach (Enemy enemy in enemies)
+            for (int i = 0; i < enemies.Length; i++)
             {
-                enemy.StopAllActions();
+                enemies[i].StopAllActions();
             }
 
-            // Tìm người chơi trong phạm vi và gán vị trí nếu đủ điều kiện
-            List<CharacterBase> nearbyPlayers = FindNearbyPlayers(character, detectionRadius);
+                // Tìm người chơi trong phạm vi và gán vị trí nếu đủ điều kiện
+                List<CharacterBase> nearbyPlayers = FindNearbyPlayers(character, detectionRadius);
 
             if (nearbyPlayers.Count == 3 && targetPositions.Length == 3)
             {
                 AssignPlayersToPositions(nearbyPlayers);
             }
         }
+        
     }
 
     private void DelayCanvasFinal()

@@ -116,13 +116,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDestroyOnClose: 0
+  spoinBrick: {fileID: 0}
   mapPrefabs:
   - {fileID: 6037569774551338064, guid: fd49b9e89744aba49a0a0cde6e5d0d97, type: 3}
   - {fileID: 7769168864132052380, guid: 0f0254b5b99505d46944c65af82dbd5c, type: 3}
   - {fileID: 2213446242193310983, guid: cb09ac829c97354449487e8ddaf81a2b, type: 3}
-  Play1: {fileID: 933673180213016910}
-  Play2: {fileID: 2997453813576658754}
-  Play3: {fileID: 6549361281258226228}
+  currentMapIndex: 0
+  currentMapInstances: {fileID: 0}
 --- !u!1 &552817231949298061
 GameObject:
   m_ObjectHideFlags: 0

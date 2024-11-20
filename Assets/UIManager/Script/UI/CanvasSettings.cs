@@ -5,7 +5,6 @@ using UnityEngine;
 public class CanvasSettings : UICanvas
 {
     [SerializeField] GameObject[] button;
-
     public void SetState(UICanvas _uICanvas)
     {
         for (int i = 0; i < button.Length; i++)
@@ -25,6 +24,7 @@ public class CanvasSettings : UICanvas
     }
     public void MainMenuButton()
     {
+
         UIManager.Instance.CloseALL();
         UIManager.Instance.OpenUI<CanvasMainMenu>();
     }

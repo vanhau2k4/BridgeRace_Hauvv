@@ -9,115 +9,26 @@ using UnityEngine.UI;
 
 public class CanvasMainMenu : UICanvas
 {
-    
     public List<GameObject> mapPrefabs;
-    private int currentMapIndex = 0;
-    private GameObject currentMapInstance;
-    public Button Play1;
-    public Button Play2;
-    public Button Play3;
-    private void ResetNPC()
-    {
-        for (int i = 0; i < enemy.Length; i++)
-        {
-            enemy[i].Play = true;
-            enemy[i].transform.position = new Vector3(-5.3f, 0, -8);
-            if (enemy[i].listBrickHiden.Count > 0 || enemy[i].playerBrick.Count > 0)
-            {
-                for (int e = 0; e < enemy[i].listBrickHiden.Count; e++)
-                {
-                    Brick brick = enemy[i].listBrickHiden[e];
-                    brick.gameObject.SetActive(true);
-                }
-                for (int e = 0; e < enemy[i].playerBrick.Count; e++)
-                {
-                    GameObject brick = enemy[i].playerBrick[e];
-                    brick.SetActive(false);
-                    enemy[i].haibrick -= 0.21f;
-                }
-                enemy[i].listBrickHiden.Clear();
-            }
-            enemy[i].hasTriggered = true;
-            enemy[i].skinnedMeshRenderer.enabled = true;
-            enemy[i].ResumeActions();
-        }
-    }
-
-    private void ResetPlayer()
-    {
-        player.controller.enabled = false;
-        player.transform.position = new Vector3(6, 5, -8);
-        player.controller.enabled = true;
-        if (player.listBrickHiden.Count > 0 || player.playerBrick.Count > 0)
-        {
-            for (int i = 0; i < player.listBrickHiden.Count; i++)
-            {
-                Brick brick = player.listBrickHiden[i];
-                brick.gameObject.SetActive(true);
-            }
-            for (int i = 0; i < player.playerBrick.Count; i++)
-            {
-                GameObject brick = player.playerBrick[i];
-                brick.SetActive(false);
-                player.haibrick -= 0.21f;
-            }
-            player.listBrickHiden.Clear();
-        }
-        player.skinnedMeshRenderer.enabled = true;
-        player.joystick.isJovstick = true;
-        player.hasTriggered = true;
-        player.joystick.inputCanvas.gameObject.SetActive(true);
-    }
-
+    
+    public int currentMapIndex = 0;
+    public GameObject currentMapInstances;
     public void SettingsButton()
     {
         UIManager.Instance.OpenUI<CanvasSettings>().SetState(this);
     }
-    public void Quaylai()
-    {
-        if (currentMapInstance != null)
-        {
-            Destroy(currentMapInstance);
-        }
-        SpawnMap(currentMapIndex);
-    }
-
-     public void NextMap()
-    {
-        if (currentMapInstance != null)
-        {
-            Destroy(currentMapInstance);
-        }
-
-        currentMapIndex = (currentMapIndex + 1) % mapPrefabs.Count;
-        SpawnMap(currentMapIndex);
-    }
-
-    public void SpawnMap(int index)
-    {
-        currentMapInstance = Instantiate(mapPrefabs[index], transform.position, Quaternion.identity);
-        currentMapInstance.transform.position = Vector3.zero;
-    }
+    
     public void SelectMap(int index)
     {
-        if (currentMapInstance != null)
+        if (currentMapInstances != null)
         {
-            Destroy(currentMapInstance);
+            Destroy(currentMapInstances);
         }
-
-        currentMapIndex = index;
-        SpawnMap(currentMapIndex);
-
         Close(0);
         UIManager.Instance.OpenUI<CanvasGamePlay>();
-        ResetNPC();
-        ResetPlayer();
-        ResetStais();
 
-    }
-
-    private void ResetStais()
-    {
+        Invoke(nameof(ResetPlayer), 1f);
+        Invoke(nameof(ResetNPC), 1f);
         if (spoinBrick.listBricks.Count > 0)
         {
             spoinBrick.colorCounts = new int[4] { 42, 42, 42, 42 };
@@ -127,9 +38,97 @@ public class CanvasMainMenu : UICanvas
             {
                 Destroy(brick.gameObject);
             }
-
         }
+        Invoke(nameof(ResetBrick), 1f);
+
+        currentMapIndex = index;
+        Invoke(nameof(SpawnMapDelayed), 1f);
+
+
+    }
+    void SpawnMapDelayed()
+    {
+        SpawnMap(currentMapIndex); 
+    }
+    public void SpawnMap(int index)
+    {
+        currentMapInstances = Instantiate(mapPrefabs[index], transform.position, Quaternion.identity);
+        currentMapInstances.transform.position = Vector3.zero;
+    }
+    public void ResetBrick()
+    {
+
         spoinBrick.SpawnBrick();
+    }
+    public void ResetNPC()
+    {
+        for (int i = 0; i < enemy.Length; i++)
+        {
+
+            float randomX = Random.Range(-2, 2);
+            float randomZ = Random.Range(-2, 2);
+
+            // Gán vị trí mới cho enemy[i]
+            enemy[i].transform.position = new Vector3(randomX, 0, randomZ);
+
+            if (enemy[i].listBrickHiden.Count > 0 || enemy[i].playerBrick.Count > 0)
+            {
+
+                for (int e = 0; e < enemy[i].playerBrick.Count; e++)
+                {
+
+                    enemy[i].haibrick -= 0.21f;
+                }
+                enemy[i].playerBrick.Clear();
+                enemy[i].listBrickHiden.Clear();
+                foreach (Transform child in enemy[i].transform)
+                {
+                    // Kiểm tra nếu child có tag hoặc tên liên quan đến "Brick"
+                    if (child.CompareTag("Brick")) // Đảm bảo các brick có tag "Brick"
+                    {
+                        Destroy(child.gameObject); // Xóa game object
+                    }
+                }
+            }
+
+            enemy[i].hasTriggered = true;
+            enemy[i].skinnedMeshRenderer.enabled = true;
+            enemy[i].RandomizeMaxBricks();
+            enemy[i].FindBrick();
+            enemy[i].ResumeActions();
+            enemy[i].Play = true;
+        }
+    }
+
+    public void ResetPlayer()
+    {
+        player.controller.enabled = false;
+        player.transform.position = new Vector3(6, 5, -8);
+        player.controller.enabled = true;
+        if (player.listBrickHiden.Count > 0 || player.playerBrick.Count > 0)
+        {
+
+
+            for (int i = 0; i < player.listBrickHiden.Count; i++)
+            {
+
+                player.haibrick -= 0.21f;
+            }
+            player.playerBrick.Clear();
+            player.listBrickHiden.Clear();
+            foreach (Transform child in player.transform)
+            {
+                // Kiểm tra nếu child có tag hoặc tên liên quan đến "Brick"
+                if (child.CompareTag("Brick")) // Đảm bảo các brick có tag "Brick"
+                {
+                    Destroy(child.gameObject); // Xóa game object
+                }
+            }
+        }
+        player.skinnedMeshRenderer.enabled = true;
+        player.joystick.isJovstick = true;
+        player.hasTriggered = true;
+        player.joystick.inputCanvas.gameObject.SetActive(true);
     }
 }
 

@@ -2001,13 +2001,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDestroyOnClose: 0
-  player: {fileID: 196188632715796172, guid: 4d89a04c8b60cf8439c7a16c76aaaff5, type: 3}
-  play: {fileID: 4014968639993097248, guid: 4d89a04c8b60cf8439c7a16c76aaaff5, type: 3}
-  navMeshData: {fileID: 0}
+  spoinBrick: {fileID: 0}
+  mapPrefabs: []
+  currentMapIndex: 0
   button:
   - {fileID: 2458259243909101138}
   - {fileID: 2499728536602463262}
   - {fileID: 3900158764279891030}
+  mainMenus: {fileID: 3452003271164222027, guid: 6d063705da926034e878cf1d365447af, type: 3}
 --- !u!114 &8336844364973069064
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -34,7 +34,6 @@ public class Enemy : CharacterBase
     {
         base.Start();
         agent = GetComponent<NavMeshAgent>();
-        RandomizeMaxBricks();
 
         //StartCoroutine(StateMachine());
         stateMachinge.Initialize(enemyIdleState);
@@ -107,7 +106,7 @@ public class Enemy : CharacterBase
         stateMachinge.ChangeSate(enemyNhayState);
     }
     // Tìm viên gạch gần nhất cùng màu
-    private void FindBrick()
+    public void FindBrick()
     {
         if (currentState != NPCState.Searching) return;
 
@@ -147,7 +146,7 @@ public class Enemy : CharacterBase
     }
 
     // Di chuyển đến viên brick và thu thập
-    private void MoveToBrick()
+    public void MoveToBrick()
     {
         if (targetBrick == null || listBrickHiden.Count == maxBricksToCollect)
         {
@@ -237,7 +236,7 @@ public class Enemy : CharacterBase
     }
 
     // Di chuyển đến cầu thang
-    private void MoveToStairs()
+    public void MoveToStairs()
     {
         if (targetStairs == null || targetStairs.color == this.color)
         {
@@ -270,35 +269,23 @@ public class Enemy : CharacterBase
     }
     public void StopAllActions()
     {
-        // Dừng NavMeshAgent, ngăn chặn việc di chuyển
-        if (agent != null && agent.isActiveAndEnabled)
-        {
+
             agent.isStopped = true;
             agent.ResetPath();
-        }
-        // Vô hiệu hóa hoạt động của state machine
-        if (stateMachinge != null)
-        {
-            stateMachinge.ChangeSate(enemyNhayState);  // Đưa NPC vào trạng thái nhàn rỗi
-        }
+
+            stateMachinge.ChangeSate(enemyNhayState);  
+        agent.enabled = false;
         gameObject.transform.localRotation = Quaternion.Euler(0, 180, 0);
         ClearBrick();
         agent.speed = 0;
     }
     public void ResumeActions()
     {
-        // Bật lại NavMeshAgent
-        if (agent != null && agent.isActiveAndEnabled)
-        {
-            agent.isStopped = false;
+        agent.enabled = true;
+        agent.isStopped = false;
             agent.speed = 5; // Hoặc tốc độ bạn muốn
-        }
-
-        // Kích hoạt lại state machine
-        if (stateMachinge != null)
-        {
-            stateMachinge.ChangeSate(enemyIdleState); // Quay lại trạng thái Idle hoặc trạng thái khởi đầu
-        }
+        
+            stateMachinge.ChangeSate(enemyIdleState); 
 
         Play = true; 
     }

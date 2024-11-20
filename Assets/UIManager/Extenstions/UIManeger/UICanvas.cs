@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Xml.Serialization;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -11,6 +13,10 @@ public class UICanvas : MonoBehaviour
     public Player player {  get; private set; }
     public Enemy[] enemy {  get; private set; }
     public SpoinBrick spoinBrick;
+
+    
+
+
     private void Awake()
     {
         RectTransform rect = GetComponent<RectTransform>();
@@ -33,7 +39,6 @@ public class UICanvas : MonoBehaviour
         enemy = FindObjectsOfType<Enemy>();
         spoinBrick = FindObjectOfType<SpoinBrick>();
     }
-
     //goi truoc khi canvas duoc acive
     public virtual void Setup()
     {
@@ -74,5 +79,30 @@ public class UICanvas : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+
+/*    public void Quaylai()
+    {
+        if (currentMapInstance != null)
+        {
+            Destroy(currentMapInstance);
+        }
+        SpawnMap(currentMapIndex);
+    }
+
+    public void NextMap()
+    {
+        if (currentMapInstance != null)
+        {
+            Destroy(currentMapInstance);
+        }
+
+        currentMapIndex = (currentMapIndex + 1) % mapPrefabs.Count;
+        SpawnMap(currentMapIndex);
+    }*/
+
+
+
+
+
 
 }

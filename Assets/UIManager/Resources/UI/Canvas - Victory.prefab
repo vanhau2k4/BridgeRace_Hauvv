@@ -460,6 +460,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDestroyOnClose: 0
+  spoinBrick: {fileID: 0}
+  mapPrefabs: []
+  currentMapIndex: 0
+  mainMenus: {fileID: 3452003271164222027, guid: 6d063705da926034e878cf1d365447af, type: 3}
 --- !u!1 &8061947628192467955
 GameObject:
   m_ObjectHideFlags: 0

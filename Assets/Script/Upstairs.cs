@@ -6,7 +6,7 @@ using UnityEngine;
 public class Upstairs : MonoBehaviour
 {
     public ColorType color;
-    public SpoinBrick spoinBrick;
+    private SpoinBrick spoinBrick;
 
     private void Start()
     {
