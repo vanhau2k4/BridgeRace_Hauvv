@@ -26,9 +26,10 @@ public class CanvasMainMenu : UICanvas
         }
         Close(0);
         UIManager.Instance.OpenUI<CanvasGamePlay>();
-
-        Invoke(nameof(ResetPlayer), 1f);
-        Invoke(nameof(ResetNPC), 1f);
+        currentMapIndex = index;
+        Invoke(nameof(SpawnMapDelayed), 0.9f);
+        Invoke(nameof(ResetPlayer), 1.1f);
+        Invoke(nameof(ResetNPC), 1.1f);
         if (spoinBrick.listBricks.Count > 0)
         {
             spoinBrick.colorCounts = new int[4] { 42, 42, 42, 42 };
@@ -41,8 +42,7 @@ public class CanvasMainMenu : UICanvas
         }
         Invoke(nameof(ResetBrick), 1f);
 
-        currentMapIndex = index;
-        Invoke(nameof(SpawnMapDelayed), 1f);
+       
 
 
     }
@@ -96,7 +96,6 @@ public class CanvasMainMenu : UICanvas
             enemy[i].RandomizeMaxBricks();
             enemy[i].FindBrick();
             enemy[i].ResumeActions();
-            enemy[i].Play = true;
         }
     }
 

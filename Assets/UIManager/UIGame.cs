@@ -7,6 +7,7 @@ public class UIGame : MonoBehaviour
     void Start()
     {
         UIManager.Instance.OpenUI<CanvasMainMenu>();
+        Debug.Log("Start");
     }
 
 }

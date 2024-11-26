@@ -80,29 +80,4 @@ public class UICanvas : MonoBehaviour
         }
     }
 
-/*    public void Quaylai()
-    {
-        if (currentMapInstance != null)
-        {
-            Destroy(currentMapInstance);
-        }
-        SpawnMap(currentMapIndex);
-    }
-
-    public void NextMap()
-    {
-        if (currentMapInstance != null)
-        {
-            Destroy(currentMapInstance);
-        }
-
-        currentMapIndex = (currentMapIndex + 1) % mapPrefabs.Count;
-        SpawnMap(currentMapIndex);
-    }*/
-
-
-
-
-
-
 }
