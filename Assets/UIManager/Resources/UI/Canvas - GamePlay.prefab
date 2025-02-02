@@ -168,10 +168,10 @@ RectTransform:
   - {fileID: 1138886111186542936}
   m_Father: {fileID: 4588984921743285114}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -169.67, y: -153.1}
-  m_SizeDelta: {x: 200, y: 80}
+  m_AnchorMin: {x: 0.7307037, y: 0.89468753}
+  m_AnchorMax: {x: 0.9415927, y: 0.94316673}
+  m_AnchoredPosition: {x: 7.330017, y: 2.4000244}
+  m_SizeDelta: {x: -28, y: -13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4746216692678981853
 CanvasRenderer:
@@ -286,7 +286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5229184652839411538
 RectTransform:
   m_ObjectHideFlags: 0
@@ -383,9 +383,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDestroyOnClose: 0
-  player: {fileID: 196188632715796172, guid: 4d89a04c8b60cf8439c7a16c76aaaff5, type: 3}
-  play: {fileID: 4014968639993097248, guid: 4d89a04c8b60cf8439c7a16c76aaaff5, type: 3}
-  navMeshData: {fileID: 23800000, guid: 3f83f3a97441f7e4db83e3bee1a150f4, type: 2}
+  spoinBrick: {fileID: 0}
 --- !u!1 &8862506022617241068
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,6 +15,7 @@ public class Player : CharacterBase
     public Transform lookAtPoint;
     public CharacterController controller;
     #endregion
+
     protected override void Awake()
     {
         base.Awake();
@@ -45,9 +46,13 @@ public class Player : CharacterBase
     {
         stateMachinge.ChangeSate(playerNhayState);
         gameObject.transform.localRotation = Quaternion.Euler(0, 180, 0);
+        controller.enabled = false;
+        rb.useGravity = true;
         ClearBrick();
         joystick.isJovstick = false;
         joystick.movementDirection = Vector3.zero;
+        /*joystick.velocity = Vector3.zero;
+        controller.SimpleMove(Vector3.zero);*/
         joystick.inputCanvas.gameObject.SetActive(false);
     }
 
@@ -55,8 +60,6 @@ public class Player : CharacterBase
     {
         if (Physics.Raycast(checkStair.transform.position, Vector3.down, out RaycastHit hit, checkStairDistance, lmStair))
         {
-            if (hit.transform == null) return;
-            
             if (hit.transform.TryGetComponent(out StairsCheck stairBrick))
             {
                 if (listBrickHiden.Count == 0 && velocity.y > 0 && stairBrick.color != color)
@@ -70,7 +73,7 @@ public class Player : CharacterBase
 
                 Brick brick = listBrickHiden[listBrickHiden.Count - 1];
                 if (stairBrick.color == color) return;
-
+                AudioManager.instance.PlaySFX("EatStars");
                 stairBrick.AddBrick(brick);
                 stairBrick.ChangeStairColor(color);
                 RemoveBrick(brick);

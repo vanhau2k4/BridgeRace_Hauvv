@@ -20,7 +20,7 @@ public class MainJoystick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isJovstick)
+        if (isJovstick && controller.enabled)
         {
             movementDirection = new Vector3(joystick.Direction.x, 0.0f, joystick.Direction.y);
             controller.SimpleMove(movementDirection * movementSpeed);

@@ -17,9 +17,10 @@ public class CanvasGamePlay : UICanvas
     {
         UIManager.Instance.OpenUI<CanvasSettings>().SetState(this);
         player.joystick.inputCanvas.gameObject.SetActive(false);
-        for (int i = 0; i < enemy.Length; i++)
+        Time.timeScale = 0f;
+/*        for (int i = 0; i < enemy.Length; i++)
         {
             enemy[i].Play = false;
-        }
+        }*/
     }
 }

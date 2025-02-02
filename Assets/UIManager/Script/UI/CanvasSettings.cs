@@ -28,5 +28,12 @@ public class CanvasSettings : UICanvas
         UIManager.Instance.CloseALL();
         UIManager.Instance.OpenUI<CanvasMainMenu>();
     }
+    public void Exit()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
 }
 

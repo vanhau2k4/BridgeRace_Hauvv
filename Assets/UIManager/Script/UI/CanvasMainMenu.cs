@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
@@ -20,6 +21,12 @@ public class CanvasMainMenu : UICanvas
     
     public void SelectMap(int index)
     {
+        player.controller.enabled = false;
+        player.skinnedMeshRenderer.enabled = false;
+        foreach (var npc in enemy)
+        {
+            npc.skinnedMeshRenderer.enabled = false;
+        }
         if (currentMapInstances != null)
         {
             Destroy(currentMapInstances);
@@ -41,10 +48,7 @@ public class CanvasMainMenu : UICanvas
             }
         }
         Invoke(nameof(ResetBrick), 1f);
-
-       
-
-
+        Time.timeScale = 1f;
     }
     void SpawnMapDelayed()
     {
@@ -62,48 +66,46 @@ public class CanvasMainMenu : UICanvas
     }
     public void ResetNPC()
     {
-        for (int i = 0; i < enemy.Length; i++)
+        foreach (var npc in enemy)
         {
-
-            float randomX = Random.Range(-2, 2);
-            float randomZ = Random.Range(-2, 2);
+            float randomX = UnityEngine.Random.Range(-3, 3);
+            float randomZ = UnityEngine.Random.Range(-3, 3);
 
             // Gán vị trí mới cho enemy[i]
-            enemy[i].transform.position = new Vector3(randomX, 0, randomZ);
-
-            if (enemy[i].listBrickHiden.Count > 0 || enemy[i].playerBrick.Count > 0)
+            npc.transform.position = new Vector3(randomX, 0, randomZ);
+            // Kiểm tra và xóa các viên gạch
+            if (npc.listBrickHiden.Count > 0 || npc.playerBrick.Count > 0)
             {
+                float totalSubtract = 0.21f * npc.playerBrick.Count;
+                npc.haibrick = Mathf.Max(0, npc.haibrick - totalSubtract); // Đảm bảo không bị âm
+                npc.playerBrick.Clear();
+                npc.listBrickHiden.Clear();
 
-                for (int e = 0; e < enemy[i].playerBrick.Count; e++)
+                // Lưu danh sách các Brick trước khi xóa
+                List<GameObject> bricksToDestroy = new List<GameObject>();
+                foreach (Transform child in npc.transform)
                 {
-
-                    enemy[i].haibrick -= 0.21f;
-                }
-                enemy[i].playerBrick.Clear();
-                enemy[i].listBrickHiden.Clear();
-                foreach (Transform child in enemy[i].transform)
-                {
-                    // Kiểm tra nếu child có tag hoặc tên liên quan đến "Brick"
-                    if (child.CompareTag("Brick")) // Đảm bảo các brick có tag "Brick"
+                    if (child.CompareTag("Brick"))
                     {
-                        Destroy(child.gameObject); // Xóa game object
+                        bricksToDestroy.Add(child.gameObject);
                     }
+                }
+                foreach (var brick in bricksToDestroy)
+                {
+                    Destroy(brick);
                 }
             }
 
-            enemy[i].hasTriggered = true;
-            enemy[i].skinnedMeshRenderer.enabled = true;
-            enemy[i].RandomizeMaxBricks();
-            enemy[i].FindBrick();
-            enemy[i].ResumeActions();
+            // Reset trạng thái NPC
+            npc.RandomizeMaxBricks();
+            npc.FindBrick();
+            npc.ResumeActions();
         }
     }
-
+    
     public void ResetPlayer()
     {
-        player.controller.enabled = false;
-        player.transform.position = new Vector3(6, 5, -8);
-        player.controller.enabled = true;
+        player.transform.position = new Vector3(0,0, 0);
         if (player.listBrickHiden.Count > 0 || player.playerBrick.Count > 0)
         {
 
@@ -115,15 +117,21 @@ public class CanvasMainMenu : UICanvas
             }
             player.playerBrick.Clear();
             player.listBrickHiden.Clear();
+            List<GameObject> bricksToDestroy = new List<GameObject>();
             foreach (Transform child in player.transform)
             {
-                // Kiểm tra nếu child có tag hoặc tên liên quan đến "Brick"
-                if (child.CompareTag("Brick")) // Đảm bảo các brick có tag "Brick"
+                if (child.CompareTag("Brick"))
                 {
-                    Destroy(child.gameObject); // Xóa game object
+                    bricksToDestroy.Add(child.gameObject);
                 }
             }
+            foreach (var brick in bricksToDestroy)
+            {
+                Destroy(brick);
+            }
         }
+        player.controller.enabled = true;
+        player.rb.useGravity = false;
         player.skinnedMeshRenderer.enabled = true;
         player.joystick.isJovstick = true;
         player.hasTriggered = true;

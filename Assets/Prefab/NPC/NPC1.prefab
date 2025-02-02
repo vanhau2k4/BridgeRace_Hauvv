@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c59de7dde19445149afc8f2288ea4188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: 1
+  color: 3
   velocity: {x: 0, y: 0, z: 0}
   skinnedMeshRenderer: {fileID: 3303498054758851371}
   listMau:
@@ -141,8 +141,10 @@ MonoBehaviour:
   stairPrefab: {fileID: 3840818616187751304, guid: 16520c37a94d9884b82fec2d97e91a84, type: 3}
   haibrick: 0
   hasTriggered: 1
+  rb: {fileID: 6687340353277743377}
   agent: {fileID: 0}
   searchRadius: 100
+  targetBrick: {fileID: 0}
   currentState: 0
   final: {fileID: 0}
   Play: 0

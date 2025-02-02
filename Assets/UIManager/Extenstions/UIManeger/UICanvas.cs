@@ -63,10 +63,11 @@ public class UICanvas : MonoBehaviour
     {
         gameObject.SetActive(false);
         player.joystick.inputCanvas.gameObject.SetActive(true);
-        for (int i = 0; i < enemy.Length; i++)
+        Time.timeScale = 1f;
+/*        for (int i = 0; i < enemy.Length; i++)
         {
             enemy[i].Play = true;
-        }
+        }*/
     }
     public virtual void DestroyOnClose()
     {

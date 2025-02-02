@@ -1,118 +1,100 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class Final : MonoBehaviour
 {
-    public Transform[] targetPositions; // Mảng chứa 3 vị trí mục tiêu.
-    public float detectionRadius = 200f; // Bán kính phát hiện.
+    public Transform[] targetPositions;
+    public float detectionRadius = 200f;
+    private int playerRank = 0;
 
-    Player player;
-    Enemy[] enemies;
-    SpoinBrick spoinBrick;
+    private Player player;
+    private Enemy[] enemies;
+
     private void Start()
     {
         player = FindObjectOfType<Player>();
         enemies = FindObjectsOfType<Enemy>();
-        spoinBrick = FindObjectOfType<SpoinBrick>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out CharacterBase character))
+        if (!other.TryGetComponent(out CharacterBase character)) return;
+
+        player.Final();
+        foreach (var enemy in enemies)
         {
+            enemy.StopAllActions();
+        }
+
+        List<CharacterBase> nearbyPlayers = FindNearbyPlayers(character);
+        if (nearbyPlayers.Count == 4 && targetPositions.Length == 3)
+        {
+            playerRank = AssignPlayersToPositions(nearbyPlayers, player);
             Invoke(nameof(DelayCanvasFinal), 2);
             gameObject.SetActive(false);
-            player.Final();
-
-            for (int i = 0; i < enemies.Length; i++)
-            {
-                enemies[i].StopAllActions();
-            }
-
-                // Tìm người chơi trong phạm vi và gán vị trí nếu đủ điều kiện
-                List<CharacterBase> nearbyPlayers = FindNearbyPlayers(character, detectionRadius);
-
-            if (nearbyPlayers.Count == 3 && targetPositions.Length == 3)
-            {
-                AssignPlayersToPositions(nearbyPlayers);
-            }
         }
-        
     }
 
     private void DelayCanvasFinal()
     {
         UIManager.Instance.CloseALL();
-        UIManager.Instance.OpenUI<CanvasVitoty>();
+        CanvasVitoty victoryCanvas = UIManager.Instance.OpenUI<CanvasVitoty>();
+        victoryCanvas.SetRanking(playerRank);
+        victoryCanvas.SetScore(player.listBrickHiden.Count);
     }
 
-    private List<CharacterBase> FindNearbyPlayers(CharacterBase currentPlayer, float range)
+    private List<CharacterBase> FindNearbyPlayers(CharacterBase currentPlayer)
     {
         List<CharacterBase> players = new List<CharacterBase>();
+        Collider[] hitColliders = Physics.OverlapSphere(currentPlayer.transform.position, detectionRadius);
 
-        // Tìm các đối tượng trong phạm vi detectionRadius
-        Collider[] hitColliders = Physics.OverlapSphere(currentPlayer.transform.position, range);
-
-        foreach (Collider hitCollider in hitColliders)
+        foreach (Collider hit in hitColliders)
         {
-            if (hitCollider.TryGetComponent(out CharacterBase player) && !players.Contains(player))
+            CharacterBase player = hit.GetComponent<CharacterBase>();
+            if (player != null && !players.Contains(player))
             {
                 players.Add(player);
             }
         }
 
-        // Đảm bảo luôn có currentPlayer trong danh sách
         if (!players.Contains(currentPlayer))
         {
             players.Add(currentPlayer);
         }
 
-        // Chỉ giữ lại 3 người chơi
-        return players.GetRange(0, Mathf.Min(players.Count, 3));
+        players.Sort((p1, p2) =>
+            Vector3.Distance(p1.transform.position, transform.position)
+            .CompareTo(Vector3.Distance(p2.transform.position, transform.position))
+        );
+
+        return players.Take(4).ToList();
     }
 
-    private void AssignPlayersToPositions(List<CharacterBase> players)
+    private int AssignPlayersToPositions(List<CharacterBase> players, Player player)
     {
-        List<(CharacterBase player, int bestPositionIndex, float bestDistance)> playerDistances = new List<(CharacterBase, int, float)>();
+        players.Sort((p1, p2) =>
+            Vector3.Distance(p1.transform.position, transform.position)
+            .CompareTo(Vector3.Distance(p2.transform.position, transform.position))
+        );
 
-        // Tính khoảng cách của mỗi người chơi đến từng vị trí và tìm vị trí gần nhất
-        foreach (var player in players)
+        CharacterBase farthestPlayer = players[players.Count - 1];
+        players.RemoveAt(players.Count - 1);
+
+        HashSet<int> takenPositions = new HashSet<int>();
+        int playerRank = 4;
+
+        for (int i = 0; i < players.Count; i++)
         {
-            int bestPositionIndex = -1;
-            float bestDistance = float.MaxValue;
+            players[i].transform.position = targetPositions[i].position;
+            takenPositions.Add(i);
 
-            for (int i = 0; i < targetPositions.Length; i++)
+            if (players[i] == player)
             {
-                float distance = Vector3.Distance(player.transform.position, targetPositions[i].position);
-                if (distance < bestDistance)
-                {
-                    bestDistance = distance;
-                    bestPositionIndex = i;
-                }
+                playerRank = i + 1;
             }
-
-            playerDistances.Add((player, bestPositionIndex, bestDistance));
         }
 
-        // Gán từng người chơi vào vị trí gần nhất mà chưa có ai
-        bool[] positionsTaken = new bool[targetPositions.Length]; // Để đánh dấu vị trí đã được sử dụng
-
-        foreach (var playerData in playerDistances)
-        {
-            int targetIndex = playerData.bestPositionIndex;
-
-            // Tìm vị trí gần nhất chưa bị lấy
-            while (positionsTaken[targetIndex])
-            {
-                targetIndex = (targetIndex + 1) % targetPositions.Length;
-            }
-
-            // Đánh dấu vị trí đã được sử dụng và gán vị trí cho người chơi
-            positionsTaken[targetIndex] = true;
-            playerData.player.transform.position = targetPositions[targetIndex].position;
-        }
+        return playerRank;
     }
 }

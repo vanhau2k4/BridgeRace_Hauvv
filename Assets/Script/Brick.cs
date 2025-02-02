@@ -7,17 +7,12 @@ public class Brick : MonoBehaviour
     public ColorType color; 
     public List<Material> listMauBrick;
     public MeshRenderer meshRenderer;
+
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         ChangeColor();
     }
-
-    void Start()
-    {
-
-    }
-
     public Material GetColorMaterial(ColorType color)
     {
         return listMauBrick[(int)color];

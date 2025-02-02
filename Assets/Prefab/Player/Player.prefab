@@ -235,7 +235,7 @@ CharacterController:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Height: 2.25
   m_Radius: 0.2
@@ -274,9 +274,12 @@ MonoBehaviour:
     m_Bits: 64
   checkStair: {fileID: 6907947329700747211}
   stairPrefab: {fileID: 3840818616187751304, guid: 16520c37a94d9884b82fec2d97e91a84, type: 3}
+  haibrick: 0
   hasTriggered: 1
+  rb: {fileID: 0}
   followPoint: {fileID: 2792097846784487572}
   lookAtPoint: {fileID: 4549165002436917003}
+  controller: {fileID: 5636546089555153669}
 --- !u!54 &2812371821049702363
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -323,8 +326,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.25, y: 0.61284447, z: 1.25}
-  m_Center: {x: 0, y: 0.21475089, z: 0}
+  m_Size: {x: 1.25, y: 0.8304846, z: 1.25}
+  m_Center: {x: 0, y: 0.32357097, z: 0}
 --- !u!1 &8667825276132682470
 GameObject:
   m_ObjectHideFlags: 0

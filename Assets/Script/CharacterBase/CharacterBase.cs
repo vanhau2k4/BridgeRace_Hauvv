@@ -16,7 +16,8 @@ public class CharacterBase : MonoBehaviour
     public SkinnedMeshRenderer skinnedMeshRenderer; 
 
     public List<Material> listMau; 
-    public List<GameObject> playerBrick = new List<GameObject>(); 
+    public List<GameObject> playerBrick = new List<GameObject>();
+    [System.NonSerialized]
     public List<Brick> listBrickHiden = new List<Brick>();
 
     public GameObject brickPrefab; 
@@ -31,6 +32,8 @@ public class CharacterBase : MonoBehaviour
     SpoinBrick spoinBrick; 
     public float haibrick;
     public bool hasTriggered = true;
+
+    public Rigidbody rb;
     //
     public Animator anim {  get; private set; }
     // Khởi tạo màu sắc cho nhân vật
@@ -43,7 +46,7 @@ public class CharacterBase : MonoBehaviour
     protected virtual void Start()
     {
         anim = GetComponentInChildren<Animator>();
-
+        rb = GetComponent<Rigidbody>();
 
         stairsCheck = FindObjectOfType<StairsCheck>();
         spoinBrick = FindObjectOfType<SpoinBrick>();
@@ -86,8 +89,6 @@ public class CharacterBase : MonoBehaviour
         {
             playerBrick[listBrickHiden.Count -1].gameObject.SetActive(true);
         }
-
-        //float heightOffset = 0.21f * listBrick.Count; 
     }
 
     // Xóa viên gạch khỏi danh sách và xử lý việc xuất hiện lại viên gạch
@@ -100,8 +101,6 @@ public class CharacterBase : MonoBehaviour
             int index = listBrickHiden.Count;
             GameObject abang = playerBrick[index].gameObject;
             abang.SetActive(false);
-            //UpdateBrickPositions(); 
-        
     }
 
     public virtual void HideAllBrick(Brick brick)

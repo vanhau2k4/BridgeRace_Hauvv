@@ -1,21 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 using static UnityEngine.ProBuilder.AutoUnwrapSettings;
 public enum NPCState { Searching, Collecting, Building }
 public class Enemy : CharacterBase
 {
     public NavMeshAgent agent;
     public float searchRadius = 100f;
-    private Brick targetBrick;
+    public Brick targetBrick;
     private int maxBricksToCollect;
     public NPCState currentState = NPCState.Searching;
 
     private StairsCheck targetStairs;
     public Transform final;
-    public bool Play = false;
+
     public EnemyStateChinge stateMachinge { get; private set; }
 
     public EnemyIdle enemyIdleState { get; private set; }
@@ -41,7 +41,7 @@ public class Enemy : CharacterBase
     protected override void Update()
     {
         base.Update();
-        if (Play == true)
+        if (agent.enabled)
         {
             switch (currentState)
             {
@@ -65,11 +65,13 @@ public class Enemy : CharacterBase
     {
         if (Physics.Raycast(checkStair.transform.position, Vector3.down, out RaycastHit hit, checkStairDistance, lmStair))
         {
-            if (hit.transform == null) return;
-
             if (hit.transform.TryGetComponent(out StairsCheck stairBrick))
             {
-                if (stairBrick == null || listBrickHiden.Count < 1) return;
+                if (listBrickHiden.Count == 0)
+                {
+                    currentState = NPCState.Collecting;
+                    return;
+                }
                 Brick brick = listBrickHiden[listBrickHiden.Count - 1];
                 if (stairBrick.color == color) return;
 
@@ -79,28 +81,6 @@ public class Enemy : CharacterBase
             }
         }
     }
-    // State machine to control behavior
-    private IEnumerator StateMachine()
-    {
-        while (true)
-        {
-            switch (currentState)
-            {
-                case NPCState.Searching:
-                    FindBrick();
-                    break;
-
-                case NPCState.Collecting:
-                    MoveToBrick();
-                    break;
-
-                case NPCState.Building:
-                    MoveToStairs();
-                    break;
-            }
-            yield return null;
-        }
-    }
     public void EnemyFinal()
     {
         stateMachinge.ChangeSate(enemyNhayState);
@@ -108,32 +88,36 @@ public class Enemy : CharacterBase
     // Tìm viên gạch gần nhất cùng màu
     public void FindBrick()
     {
-        if (currentState != NPCState.Searching) return;
-
         Collider[] colliders = Physics.OverlapSphere(transform.position, searchRadius);
-        float closestDistance = Mathf.Infinity;
-        targetBrick = null;
 
+        float closestDistance = Mathf.Infinity;
+        Brick closestBrick = null;
         foreach (Collider collider in colliders)
         {
             Brick brick = collider.GetComponent<Brick>();
             if (brick != null && brick.color == this.color && brick.gameObject.activeInHierarchy)
             {
+                // Tính khoảng cách đến viên gạch
                 Vector3 directionToBrick = brick.transform.position - transform.position;
                 float distance = directionToBrick.magnitude;
 
+                // Nếu viên gạch này gần hơn và không ở phía sau NPC
                 if (distance < closestDistance && !IsBrickBehindNPC(brick, directionToBrick))
                 {
                     closestDistance = distance;
-                    targetBrick = brick;
-                    currentState = NPCState.Collecting;
+                    closestBrick = brick;
                 }
             }
         }
-
-        if (targetBrick != null)
+        // Nếu tìm thấy viên gạch gần nhất
+        if (closestBrick != null)
         {
+            targetBrick = closestBrick;
             currentState = NPCState.Collecting;
+        }
+        if (closestBrick == null)
+        {
+            transform.position += transform.forward * 3 * Time.deltaTime;
         }
     }
 
@@ -156,9 +140,11 @@ public class Enemy : CharacterBase
 
         agent.SetDestination(targetBrick.transform.position);
 
-        if (Vector3.Distance(transform.position, targetBrick.transform.position) < 0.5f)
+        float pickupRange = 0.5f;
+        if (Vector3.Distance(transform.position, targetBrick.transform.position) < pickupRange)
         {
             targetBrick = null;
+            currentState = NPCState.Collecting;
         }
     }
 
@@ -252,7 +238,7 @@ public class Enemy : CharacterBase
                 if (listBrickHiden.Count <= 0)
                 {
                     RandomizeMaxBricks();
-                    currentState = NPCState.Collecting;
+                    currentState = NPCState.Searching;
                     targetStairs = null;
                 }
                 else
@@ -269,11 +255,10 @@ public class Enemy : CharacterBase
     }
     public void StopAllActions()
     {
-
-            agent.isStopped = true;
-            agent.ResetPath();
-
-            stateMachinge.ChangeSate(enemyNhayState);  
+        agent.isStopped = true;
+        agent.ResetPath();
+        rb.useGravity = true;
+        stateMachinge.ChangeSate(enemyNhayState);  
         agent.enabled = false;
         gameObject.transform.localRotation = Quaternion.Euler(0, 180, 0);
         ClearBrick();
@@ -283,16 +268,16 @@ public class Enemy : CharacterBase
     {
         agent.enabled = true;
         agent.isStopped = false;
-            agent.speed = 5; // Hoặc tốc độ bạn muốn
-        
-            stateMachinge.ChangeSate(enemyIdleState); 
-
-        Play = true; 
+        agent.speed = 5; 
+        stateMachinge.ChangeSate(enemyIdleState);
+        rb.useGravity = false;
+        hasTriggered = true;
+        skinnedMeshRenderer.enabled = true;
     }
 
     // Randomize số lượng gạch cần thu thập
     public void RandomizeMaxBricks()
     {
-        maxBricksToCollect = Random.Range(7, 13);
+        maxBricksToCollect = Random.Range(10, 20);
     }
 }
