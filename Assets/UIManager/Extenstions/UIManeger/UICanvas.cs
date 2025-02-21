@@ -14,7 +14,7 @@ public class UICanvas : MonoBehaviour
     public Enemy[] enemy {  get; private set; }
     public SpoinBrick spoinBrick;
 
-    
+
 
 
     private void Awake()
@@ -64,10 +64,6 @@ public class UICanvas : MonoBehaviour
         gameObject.SetActive(false);
         player.joystick.inputCanvas.gameObject.SetActive(true);
         Time.timeScale = 1f;
-/*        for (int i = 0; i < enemy.Length; i++)
-        {
-            enemy[i].Play = true;
-        }*/
     }
     public virtual void DestroyOnClose()
     {

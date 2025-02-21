@@ -11,6 +11,7 @@ public class CanvasVitoty : UICanvas
     {
         Close(0);
         UIManager.Instance.OpenUI<CanvasMainMenu>();
+        AudioManager.instance.StopMusic();
     }
     public void SetRanking(int rank)
     {

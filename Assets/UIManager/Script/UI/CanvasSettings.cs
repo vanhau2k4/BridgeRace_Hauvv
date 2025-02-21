@@ -24,9 +24,9 @@ public class CanvasSettings : UICanvas
     }
     public void MainMenuButton()
     {
-
         UIManager.Instance.CloseALL();
         UIManager.Instance.OpenUI<CanvasMainMenu>();
+        AudioManager.instance.StopMusic();
     }
     public void Exit()
     {

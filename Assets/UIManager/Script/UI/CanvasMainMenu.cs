@@ -49,6 +49,8 @@ public class CanvasMainMenu : UICanvas
         }
         Invoke(nameof(ResetBrick), 1f);
         Time.timeScale = 1f;
+        
+        AudioManager.instance.PlayMusic("PlayGame");
     }
     void SpawnMapDelayed()
     {

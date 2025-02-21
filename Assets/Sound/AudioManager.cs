@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
@@ -24,12 +25,6 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private void Start()
-    {
-        PlayMusic("PlayGame");
-    }
-
     public void PlayMusic(string name)
     {
         Sound s = Array.Find(musicSounds, x => x.name == name);
@@ -43,7 +38,13 @@ public class AudioManager : MonoBehaviour
             musicSource.Play();
         }
     }
-
+    public void StopMusic()
+    {
+        if (musicSource.isPlaying)
+        {
+            musicSource.Stop();
+        }
+    }
     public void PlaySFX(string name)
     {
         Sound s = Array.Find(sfxSounds, x => x.name == name);
@@ -60,25 +61,25 @@ public class AudioManager : MonoBehaviour
     public void ToggleMusic()
     {
         musicSource.mute = !musicSource.mute;
-        PlayerPrefs.SetInt("MusicMute", musicSource.mute ? 1 : 0); // Lưu trạng thái mute
+        PlayerPrefs.SetInt("MusicMute", musicSource.mute ? 1 : 0); 
     }
 
     public void ToggleSFX()
     {
         sfxSource.mute = !sfxSource.mute;
-        PlayerPrefs.SetInt("SFXMute", sfxSource.mute ? 1 : 0); // Lưu trạng thái mute
+        PlayerPrefs.SetInt("SFXMute", sfxSource.mute ? 1 : 0); 
     }
 
     public void MusicVolume(float _volume)
     {
         musicSource.volume = _volume;
-        PlayerPrefs.SetFloat("MusicVolume", _volume); // Lưu âm lượng
+        PlayerPrefs.SetFloat("MusicVolume", _volume); 
     }
 
     public void SFXVolume(float _volume)
     {
         sfxSource.volume = _volume;
-        PlayerPrefs.SetFloat("SFXVolume", _volume); // Lưu âm lượng
+        PlayerPrefs.SetFloat("SFXVolume", _volume); 
     }
 
     private void LoadAudioSettings()
